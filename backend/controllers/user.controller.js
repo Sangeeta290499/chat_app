@@ -2,6 +2,8 @@
 import { User } from "../models/user.model.js";
 import bycrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 //creating register logic
 export const register = async (req, res) => {
@@ -83,3 +85,75 @@ export const login = async (req, res) => {
     console.log(error);
   }
 };
+
+//creating logout logic
+export const logout = async (_, res) => {
+    try{
+        return res.status("token","", {maxAge:0}).json({
+            message:"Logged out Successfully.",
+            success:true,
+        });
+    }catch(error){
+        console.log(error);
+    }
+};
+
+//creating getProfile logic
+export const getProfile = async (req, res) => {
+    try{
+        const userId = req.params.id;
+        let user = await User.findById(userId);
+        return res.status(200).json({
+            user,
+            success:true
+        });
+    }catch(error){
+      console.log(error);
+    }
+}
+
+//creating editProfile logic
+export const editProfile = async (req, res) =>{
+  try{
+    const userId = req.id;
+    const {bio, gender} = req.body;
+    const profilePicture = req.file;
+    let cloudResponse;
+
+    if(profilePicture){
+      const fileUri = getDataUri(profilePicture);
+      cloudResponse = await cloudinary.uploader.upload(fileUri);
+    }
+    //finding the user before editing
+    const user = await User.findById(userId);
+    if(!user){
+      return res.status(401).json({
+        message:"User not found.",
+        success:false
+      });
+    }
+    if(bio) user.bio = bio;
+    if(gender) user.gender = gender;
+    if(profilePicture) user.profilePicture = cloudResponse.secure_url;
+
+    await user.save();
+
+    return res.status(201).json({
+      message:"Profile Updated.",
+      success:true,
+      user,
+    });
+
+  }catch(error){
+    console.log(error);
+  }
+}
+
+//creating suggested user
+export const getSuggestedUsers = async (req, res) => {
+  try{
+
+  }catch(error){
+    console.log(error);
+  }
+}
