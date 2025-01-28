@@ -23,3 +23,4 @@ const isAuthenticated = async (req, res, next) => { //isAuthenticated job is to 
         console.log(error);
     }
 }
+export default isAuthenticated;
