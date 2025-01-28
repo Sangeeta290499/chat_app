@@ -152,8 +152,66 @@ export const editProfile = async (req, res) =>{
 //creating suggested user
 export const getSuggestedUsers = async (req, res) => {
   try{
-
+    const suggestedUsers = await User.find({_id:{$ne:req.id}}).selcect("-password");
+    if(!suggestedUsers){
+      return res.status(400).json({
+        message:"Currently do not have any users",
+      })
+    } ;
+    return res.status(200).json({
+      success:true,
+      users:suggestedUsers
+    })
   }catch(error){
+    console.log(error);
+  }
+};
+
+//creating follower and following
+export const followOrUnfollow = async (req, res) => {
+  try{
+    const followKrneWali = req.id; // Sangi
+    const jiskoFollowKarungi = req.params.id; // Rahul
+    if(followKrneWali === jiskoFollowKarungi){
+      return res.status(400).json({
+        message:"You cannot follow/unfollow youself",
+        success: false
+      });
+    }
+
+    const user = await User.findById(followKrneWali);
+    const targetUser = await User.findById(jiskoFollowKarungi);
+
+    if(!user || !targetUser){
+      return res.status(400).json({
+        message:"User not found",
+        success:false
+      });
+    }
+    //mai check karungi ki follow krna hai ya unfollow
+    const isFollowing = user.following.includes(jiskoFollowKarungi);
+    if(isFollowing){
+      // unfollow logic aaiga
+      await Promise.all([
+        User.updateOne({_id: followKrneWali}, {$pull:{following:jiskoFollowKarungi}}),
+        User.updateOne({_id: jiskoFollowKarungi}, {$pull:{followers:followKrneWali}}),
+      ])
+      return res.status(200).json({
+        message:"Unfollowed Successfully",
+        success:true
+      });
+    } else{
+      // follow logic aaiga
+      await Promise.all([
+        User.updateOne({_id: followKrneWali}, {$push:{following:jiskoFollowKarungi}}),
+        User.updateOne({_id: jiskoFollowKarungi}, {$push:{followers:followKrneWali}}),
+      ])
+      return res.status(200).json({
+        message:"followed Successfully",
+        success:true
+      });
+    }
+  } catch(error){
     console.log(error);
   }
 }
