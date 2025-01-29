@@ -1,4 +1,5 @@
 //user ka schema banainge
+// import { User } from "../models/user.model.js";
 
 import mongoose from "mongoose";
 
@@ -29,7 +30,13 @@ const userSchema= new mongoose.Schema({
     bio:
     {
         type:String,
-        enum:['male', 'female'],
+        // enum:['male', 'female'],
+        default:""
+    },
+    gender:
+    {
+        type:String,
+        enum:['male','female']
     },
     followers:
     [
@@ -60,4 +67,4 @@ const userSchema= new mongoose.Schema({
         }
     ]
 }, {timestamps:true});
-export default User = mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);

@@ -1,4 +1,4 @@
-import {v1 as cloudinary} from "cloudinary"; //1. cloudinary library is imported to interact with Cloudinary's API.
+import {v2 as cloudinary} from "cloudinary"; //1. cloudinary library is imported to interact with Cloudinary's API.
 //2. This library allows you to upload, manage, and manipulate media files using Cloudinary.
 import dotenv from "dotenv";
 dotenv.config({});

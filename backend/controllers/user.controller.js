@@ -88,11 +88,15 @@ export const login = async (req, res) => {
 
 //creating logout logic
 export const logout = async (_, res) => {
-    try{
-        return res.status("token","", {maxAge:0}).json({
-            message:"Logged out Successfully.",
-            success:true,
-        });
+  try {
+      // Clear the authentication token if stored in cookies
+      res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
+
+      // Send a successful response with the correct status code
+      return res.status(200).json({
+          message: "Logged out successfully.",
+          success: true,
+      });
     }catch(error){
         console.log(error);
     }
@@ -102,7 +106,7 @@ export const logout = async (_, res) => {
 export const getProfile = async (req, res) => {
     try{
         const userId = req.params.id;
-        let user = await User.findById(userId);
+        let user = await User.findById(userId).select('-password');
         return res.status(200).json({
             user,
             success:true
