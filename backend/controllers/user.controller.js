@@ -129,7 +129,7 @@ export const editProfile = async (req, res) =>{
       cloudResponse = await cloudinary.uploader.upload(fileUri);
     }
     //finding the user before editing
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select('-password');
     if(!user){
       return res.status(401).json({
         message:"User not found.",
@@ -156,7 +156,7 @@ export const editProfile = async (req, res) =>{
 //creating suggested user
 export const getSuggestedUsers = async (req, res) => {
   try{
-    const suggestedUsers = await User.find({_id:{$ne:req.id}}).selcect("-password");
+    const suggestedUsers = await User.find({_id:{$ne:req.id}}).select("-password");
     if(!suggestedUsers){
       return res.status(400).json({
         message:"Currently do not have any users",
