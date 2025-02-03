@@ -19,7 +19,7 @@ export const addNewPost = async (req, res) => {
     .toFormat('jpeg', {quality:80})
     .toBuffer();
 
-    // buffer to data uri
+    // buffer to data uri me convert krna padega
     const fileUri = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
     const cloudResponse = await cloudinary.uploader.upload(fileUri);
     const post = await Post({
@@ -34,7 +34,19 @@ export const addNewPost = async (req, res) => {
         await user.save();
     }
 
+    await post.populate({path:'author', select:'-password'});
+
+    return res.status(201).json({
+      message:'New post added',
+      post,
+      success:true,
+    })
+
   } catch (error) {
     console.log(error);
   }
 };
+
+//to get all post
+// export const getAllPost = async
+
