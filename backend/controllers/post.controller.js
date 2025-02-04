@@ -48,5 +48,25 @@ export const addNewPost = async (req, res) => {
 };
 
 //to get all post
-// export const getAllPost = async
+export const getAllPost = async(req,res) =>{
+  try{
+    const posts = await Post.find().sort({createdAt:-1}).populate({path:'author', select:'username,profilePicture'})
+    .populate({
+        path:'comments',
+        sort:{createdAt:-1},
+        populate:{
+          path:'author',
+          select:'username, profilePicture'
+        }
+    });
+    return res.status(200).json({
+      posts,
+      success:true
+    })
+  } catch(error){
+    console.log(error);
+  }
+};
+
+// export const
 
