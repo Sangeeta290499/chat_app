@@ -91,3 +91,85 @@ export const getUserPost = async(req, res) => {
   }
 }
 
+// logic of like post
+export const LikePost = async(req,res) => {
+  try{
+    const likeKarneWalaUserKiId = req.id;
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    if(!post){
+      return res.status(404).json({
+        message:"Post not found",
+        success:"false"
+      });
+    }
+    // dislike logic started
+    await post.updateOne({$addToSet: {likes:likeKarneWalaUserKiId}});  // post k ander like update ho jaiga
+    await post.save();
+
+    // implement socket io for real time notification
+
+
+    return res.status(200).json({
+      message:"Post liked",
+      success:true
+    })
+  }catch(error){
+    console.log(error);
+  }
+}
+
+// logic of dislike post
+export const disLikePost = async(req,res) => {
+  try{
+    const likeKarneWalaUserKiId = req.id;
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    if(!post){
+      return res.status(404).json({
+        message:"Post not found",
+        success:"false"
+      });
+    }
+    // like logic started
+    await post.updateOne({$pull: {likes:likeKarneWalaUserKiId}});  // post k ander dislike update ho jaiga
+    await post.save();
+
+    // implement socket io for real time notification
+
+
+    return res.status(200).json({
+      message:"Post disliked",
+      success:true
+    })
+  }catch(error){
+    console.log(error);
+  }
+}
+
+// logic of addComments started
+export const addComment = async (req, res) => {
+  try{
+    const postId = req.params.id;
+    const commentKrneWalaKiId = req.id;
+
+    const {text} = req.body;
+     const post = await Post.findById(postId);
+
+     if(!post){
+      return res.status(404).json({
+        message:"text is required",
+        success:false
+      })
+     }
+
+     const comment = await Comment.create({
+      text,
+      author:commentKrneWalaKiId,
+      post:postId
+     });
+  } catch(error){
+    console.log(error);
+  }
+
+}
