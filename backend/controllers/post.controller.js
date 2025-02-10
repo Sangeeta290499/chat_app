@@ -233,4 +233,45 @@ export const deletePost = async(req, res) =>{
   } catch(error){
     console.log(error);
   }
+};
+
+//logic for bookmark post
+export const bookmarkPost = async(req,res) =>{
+  try{
+    //which post we want to bookmark that postId
+    const postId = req.params.id;
+    // and authors id who is bookmarking
+    const authorId = req.id;
+    const post = await Post.findById(postId);
+    if(!post){
+      return res.status(404).json({
+        message:'Post not found',
+        success:false
+      });
+    }
+
+    const user = await User.findById(authorId);
+    if(user.bookmarks.includes(post._id)){
+      // if already bookmarked -> then remove from bookmark
+        await user.updateOne({$pull:{bookmarks:post._id}});
+        await user.save();
+        return res.status(200).json({
+          type:'unsaved',
+          message:'Post removed from bookmark',
+          success:true
+        });
+    }else{
+      // if it is not bookmark and we want to then belows logic will come
+      await user.updateOne({$addToSet:{bookmarks:post._id}});
+        await user.save();
+        return res.status(200).json({
+          type:'saved',
+          message:'Post bookmarked',
+          success:true
+        });
+    }
+  } catch(error){
+    console.log(error);
+  }
 }
+
