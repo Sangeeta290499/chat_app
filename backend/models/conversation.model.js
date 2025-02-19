@@ -6,14 +6,14 @@ const conversationSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
-  message: [
+  messages: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",
     },
   ],
 });
-export default Conversation = mongoose.Schema(
+export const Conversation = mongoose.Schema(
   "Conversation",
   conversationSchema
 );
