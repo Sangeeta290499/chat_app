@@ -36,3 +36,10 @@ export const sendMessage = async(req, res) => {
         console.log(error);
     }
 }
+export const getMessage = async (req,res) =>{
+    try{
+
+    }catch(error){
+        console.log(error);
+    }
+}
